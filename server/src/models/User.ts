@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import bookSchema from './Book.js';
 import type { BookDocument } from './Book.js';
 
+
 export interface UserDocument extends Document {
   username: string;
   email: string;
@@ -15,6 +16,7 @@ export interface UserDocument extends Document {
   bookCount: number;
   generateAuthToken(): string; 
 }
+
 
 
 const userSchema = new Schema<UserDocument>(

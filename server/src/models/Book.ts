@@ -1,7 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
 
 // Define the Book document interface
-export interface BookDocument extends Document {
+interface BookDocument extends Document {
   bookId: string;
   title: string;
   authors: string[];
@@ -22,4 +22,5 @@ const bookSchema = new Schema<BookDocument>({
 
 // Create and export the Book model from the schema
 const BookModel = model<BookDocument>('Book', bookSchema);
+export {type BookDocument, bookSchema} 
 export default BookModel;

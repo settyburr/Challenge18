@@ -1,5 +1,5 @@
-import UserModel from '../models/User';
-import BookModel from '../models/Book'; 
+import { User, BookModel } from '../models/index.js';
+// import { BookModel } from '../models/index.js'; 
 
 const resolvers = {
     Query: {
@@ -7,7 +7,7 @@ const resolvers = {
         if (!token) throw new Error('You must be logged in');
   
         try {
-          const user = await UserModel.findById(token).populate('savedBooks');
+          const user = await User.findById(token).populate('savedBooks');
           if (!user) throw new Error('User not found');
           return user;
         } catch (err) {
@@ -29,7 +29,7 @@ const resolvers = {
     Mutation: {
       addUser: async (_: any, { username, email, password }: { username: string; email: string; password: string }) => {
         try {
-          const newUser = new UserModel({ username, email, password });
+          const newUser = await User.create({ username, email, password });
           await newUser.save();
           return newUser;
         } catch (err) {
@@ -40,7 +40,7 @@ const resolvers = {
   
       saveBook: async (_: any, { bookId, userId }: { bookId: string; userId: string }) => {
         try {
-          const user = await UserModel.findById(userId);
+          const user = await User.findById(userId);
           if (!user) throw new Error('User not found');
   
           const book = await BookModel.findById(bookId);
@@ -57,7 +57,7 @@ const resolvers = {
   
       removeBook: async (_: any, { bookId, userId }: { bookId: string; userId: string }) => {
         try {
-          const user = await UserModel.findById(userId);
+          const user = await User.findById(userId);
           if (!user) throw new Error('User not found');
   
           user.savedBooks = user.savedBooks.filter((book: any) => book._id.toString() !== bookId);
@@ -71,7 +71,7 @@ const resolvers = {
   
       loginUser: async (_: any, { email, password }: { email: string; password: string }) => {
         try {
-          const user = await UserModel.findOne({ email });
+          const user = await User.findOne({ email });
           if (!user) throw new Error('No user found with this email');
   
           const isMatch = await user.isCorrectPassword(password); 

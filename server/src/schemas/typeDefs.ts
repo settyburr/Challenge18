@@ -1,6 +1,6 @@
 import { gql } from 'graphql-tag';
 
-export const typeDefs = gql`
+const typeDefs = gql`
   # Define the User type
   type User {
     id: ID!
@@ -21,3 +21,4 @@ export const typeDefs = gql`
     updateUser(firstName: String, lastName: String): User
   }
 `;
+export default typeDefs;
