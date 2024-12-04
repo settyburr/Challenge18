@@ -20,14 +20,14 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
   const token = authHeader.split(' ')[1];
   const secretKey = process.env.JWT_SECRET_KEY || '';
 
-    jwt.verify(token, secretKey, (err, user) => {
-      if (err) {
-        return res.sendStatus(403).send('Forbidden');
-      }
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) {
+      return res.status(403).send('Forbidden');
+    }
 
-      req.user = decoded as JwtPayload;
-      next();
-    });
+    req.user = user as JwtPayload; 
+    next();
+  });
 };
 
 export const signToken = (username: string, email: string, _id: unknown) => {

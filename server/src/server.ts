@@ -8,8 +8,6 @@ import db from './config/connection.js';
 import routes from './routes/index.js';
 import { typeDefs } from '../src/typeDefs/typeDefs.js';
 import resolvers from '../src/typeDefs/resolvers.js';
-import { error } from 'node:console';
-import { IncomingHttpHeaders } from 'node:http';
 
 
 
