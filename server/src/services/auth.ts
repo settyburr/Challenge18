@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-
 import dotenv from 'dotenv';
+
 dotenv.config();
 
 interface JwtPayload {
@@ -13,22 +13,21 @@ interface JwtPayload {
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
-  if (authHeader) {
-    const token = authHeader.split(' ')[1];
+  if (!authHeader) {
+    return res.status(401).send('Unauthorized');
+  }
 
-    const secretKey = process.env.JWT_SECRET_KEY || '';
+  const token = authHeader.split(' ')[1];
+  const secretKey = process.env.JWT_SECRET_KEY || '';
 
     jwt.verify(token, secretKey, (err, user) => {
       if (err) {
-        return res.sendStatus(403); // Forbidden
+        return res.sendStatus(403).send('Forbidden');
       }
 
-      req.user = user as JwtPayload;
-      return next();
+      req.user = decoded as JwtPayload;
+      next();
     });
-  } else {
-    res.sendStatus(401); // Unauthorized
-  }
 };
 
 export const signToken = (username: string, email: string, _id: unknown) => {
@@ -36,4 +35,22 @@ export const signToken = (username: string, email: string, _id: unknown) => {
   const secretKey = process.env.JWT_SECRET_KEY || '';
 
   return jwt.sign(payload, secretKey, { expiresIn: '1h' });
+};
+
+export const createContext = ({ req }: { req: Request }) => {
+  const authHeader = req.headers.authorization;
+  let user: JwtPayload | null = null;
+
+  if (authHeader) {
+    const token = authHeader.split(' ')[1];
+    const secretKey = process.env.JWT_SECRECT_KEY || '';
+
+    try {
+      const decoded = jwt.verify(token, secretKey) as JwtPayload;
+      user = decoded;
+    } catch {
+      //Failed set user to null
+    }
+  }
+  return { user };
 };

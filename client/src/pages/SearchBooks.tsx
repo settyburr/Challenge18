@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
+import { useMutation } from '@apollo/client';
+import { SAVE_BOOK } from '../Apollo/mutatuions';
+
 import {
   Container,
   Col,
@@ -62,6 +65,8 @@ const SearchBooks = () => {
     }
   };
 
+  const [saveBookMutation] = useMutation(SAVE_BOOK);
+
   // create function to handle saving a book to our database
   const handleSaveBook = async (bookId: string) => {
     // find the book in `searchedBooks` state by the matching id
@@ -75,11 +80,13 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await saveBook(bookToSave, token);
-
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+      const response = await saveBookMutation({
+        variables: {
+          bookId: bookToSave.bookId,
+          title: bookToSave.title,
+          author: bookToSave.authors[0],
+        }
+      });
 
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);

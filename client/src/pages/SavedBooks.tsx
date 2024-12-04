@@ -5,6 +5,10 @@ import { getMe, deleteBook } from '../utils/API';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 import type { User } from '../models/User';
+import { REMOVE_BOOK } from '../Apollo/mutatuions';
+import { useMutation } from '@apollo/client';
+
+
 
 const SavedBooks = () => {
   const [userData, setUserData] = useState<User>({
@@ -43,22 +47,14 @@ const SavedBooks = () => {
   }, [userDataLength]);
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
+  const [removeBookMutation] = useMutation(REMOVE_BOOK);
+
   const handleDeleteBook = async (bookId: string) => {
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
+    try{
+      await removeBookMutation({
+        variables: { bookId },
+      });
 
-    if (!token) {
-      return false;
-    }
-
-    try {
-      const response = await deleteBook(bookId, token);
-
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
-
-      const updatedUser = await response.json();
-      setUserData(updatedUser);
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
     } catch (err) {
