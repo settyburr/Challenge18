@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'; 
 
 
-import bookSchema from './Book.js';
+import { bookSchema } from './Book.js';
 import type { BookDocument } from './Book.js';
 
 
